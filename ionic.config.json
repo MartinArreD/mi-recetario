@@ -1,0 +1,7 @@
+{
+  "name": "mi-recetario",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
