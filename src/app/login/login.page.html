@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mi Recetario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1>Bienvenido</h1>
+  <p>Inicia sesión o crea una cuenta para acceder a tus recetas.</p>
+
+  <form (ngSubmit)="acceder(false)">
+    <ion-input
+        label="Correo electrónico"
+        labelPlacement="stacked"
+        type="email"
+        autocomplete="email"
+        name="correo"
+        [(ngModel)]="correo"
+        [disabled]="cargando"
+        required>
+    </ion-input>
+
+    <ion-input
+        label="Contraseña"
+        labelPlacement="stacked"
+        type="password"
+        autocomplete="current-password"
+        name="password"
+        [(ngModel)]="password"
+        [disabled]="cargando"
+        required>
+    </ion-input>
+
+    <ion-button
+        class="ion-margin-top"
+        expand="block"
+        type="submit"
+        [disabled]="cargando">
+      {{ cargando ? 'Procesando...' : 'Iniciar sesión' }}
+    </ion-button>
+
+    <ion-button
+        expand="block"
+        fill="outline"
+        type="button"
+        [disabled]="cargando"
+        (click)="acceder(true)">
+      Crear cuenta
+    </ion-button>
+
+    <p aria-live="polite">{{ mensaje }}</p>
+  </form>
+</ion-content>

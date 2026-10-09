@@ -1,20 +1,247 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Mi Recetario</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-segment
+    [(ngModel)]="seccion"
+    [disabled]="procesando"
+    class="ion-margin-bottom">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+    <ion-segment-button value="mis-recetas">
+      <ion-label>Mis recetas</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="explorar">
+      <ion-label>Explorar</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="favoritos">
+      <ion-label>Favoritos</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-button
+    fill="outline"
+    type="button"
+    [disabled]="procesando"
+    (click)="cerrarSesion()">
+    Cerrar sesión
+  </ion-button>
+
+  <section *ngIf="seccion === 'mis-recetas'">
+    <h1>Mis recetas</h1>
+    <p>Guarda tus ingredientes y pasos de preparación.</p>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          {{ editandoId !== null ? 'Editar receta' : 'Agregar receta' }}
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form (ngSubmit)="guardarReceta()">
+          <ion-input
+            label="Nombre de la receta"
+            labelPlacement="stacked"
+            placeholder="Ejemplo: Enchiladas verdes"
+            name="nombre"
+            [(ngModel)]="nombre"
+            [disabled]="procesando">
+          </ion-input>
+
+          <ion-textarea
+            label="Ingredientes"
+            labelPlacement="stacked"
+            placeholder="Escribe un ingrediente por línea"
+            name="ingredientes"
+            [autoGrow]="true"
+            [(ngModel)]="ingredientes"
+            [disabled]="procesando">
+          </ion-textarea>
+
+          <ion-textarea
+            label="Preparación"
+            labelPlacement="stacked"
+            placeholder="Describe los pasos"
+            name="preparacion"
+            [autoGrow]="true"
+            [(ngModel)]="preparacion"
+            [disabled]="procesando">
+          </ion-textarea>
+
+          <ion-button
+            class="ion-margin-top"
+            expand="block"
+            type="submit"
+            [disabled]="procesando || cargandoRecetas">
+            {{ editandoId !== null ? 'Guardar cambios' : 'Guardar receta' }}
+          </ion-button>
+
+          <ion-button
+            *ngIf="editandoId !== null"
+            expand="block"
+            fill="outline"
+            type="button"
+            [disabled]="procesando"
+            (click)="cancelarEdicion()">
+            Cancelar edición
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <p aria-live="polite">{{ mensaje }}</p>
+
+    <h2>Recetas guardadas</h2>
+
+    <p *ngIf="cargandoRecetas">Cargando recetas...</p>
+
+    <p *ngIf="!cargandoRecetas && recetas.length === 0">
+      Todavía no tienes recetas. Agrega la primera.
+    </p>
+
+    <ion-card *ngFor="let receta of recetas">
+      <ion-card-header>
+        <ion-card-title>{{ receta.nombre }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <h3>Ingredientes</h3>
+        <p style="white-space: pre-line">{{ receta.ingredientes }}</p>
+
+        <h3>Preparación</h3>
+        <p style="white-space: pre-line">{{ receta.preparacion }}</p>
+
+        <ion-button
+          type="button"
+          fill="outline"
+          [disabled]="procesando"
+          (click)="editarReceta(receta)">
+          Editar
+        </ion-button>
+
+        <ion-button
+          type="button"
+          color="danger"
+          fill="outline"
+          [disabled]="procesando"
+          (click)="eliminarReceta(receta)">
+          Eliminar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </section>
+
+  <section *ngIf="seccion === 'explorar'">
+    <h1>Explorar recetas</h1>
+
+    <p>
+      Busca por nombre en TheMealDB. Prueba con chicken, pasta o cake.
+      Las recetas se muestran en el idioma del proveedor.
+    </p>
+
+    <form (ngSubmit)="buscarRecetas()">
+      <ion-input
+        label="Buscar recetas"
+        labelPlacement="stacked"
+        placeholder="Ejemplo: chicken"
+        name="busqueda"
+        [(ngModel)]="busqueda"
+        [disabled]="buscando">
+      </ion-input>
+
+      <ion-button
+        class="ion-margin-top"
+        expand="block"
+        type="submit"
+        [disabled]="buscando">
+        {{ buscando ? 'Buscando...' : 'Buscar recetas' }}
+      </ion-button>
+    </form>
+
+    <p aria-live="polite">{{ mensajeBusqueda }}</p>
+    <p aria-live="polite">{{ mensajeFavoritos }}</p>
+
+    <ion-card *ngFor="let receta of resultados">
+      <img
+        *ngIf="receta.imagen"
+        [src]="receta.imagen"
+        [alt]="receta.nombre"
+        loading="lazy"
+        style="width: 100%; height: 200px; object-fit: cover;">
+
+      <ion-card-header>
+        <ion-card-title>{{ receta.nombre }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <h3>Ingredientes</h3>
+        <p style="white-space: pre-line">{{ receta.ingredientes }}</p>
+
+        <h3>Preparación</h3>
+        <p style="white-space: pre-line">{{ receta.preparacion }}</p>
+
+        <ion-button
+          type="button"
+          [disabled]="procesando || cargandoFavoritos || esFavorito(receta.id)"
+          (click)="guardarFavorito(receta)">
+          {{ esFavorito(receta.id) ? 'Ya está en favoritos' : 'Guardar favorito' }}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </section>
+
+  <section *ngIf="seccion === 'favoritos'">
+    <h1>Mis favoritos</h1>
+
+    <p aria-live="polite">{{ mensajeFavoritos }}</p>
+
+    <p *ngIf="cargandoFavoritos">Cargando favoritos...</p>
+
+    <p *ngIf="!cargandoFavoritos && favoritos.length === 0">
+      Todavía no tienes favoritos. Busca una receta y guárdala.
+    </p>
+
+    <ion-card *ngFor="let receta of favoritos">
+      <img
+        *ngIf="receta.imagen"
+        [src]="receta.imagen"
+        [alt]="receta.nombre"
+        loading="lazy"
+        style="width: 100%; height: 200px; object-fit: cover;">
+
+      <ion-card-header>
+        <ion-card-title>{{ receta.nombre }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <h3>Ingredientes</h3>
+        <p style="white-space: pre-line">{{ receta.ingredientes }}</p>
+
+        <h3>Preparación</h3>
+        <p style="white-space: pre-line">{{ receta.preparacion }}</p>
+
+        <ion-button
+          type="button"
+          color="danger"
+          fill="outline"
+          [disabled]="procesando"
+          (click)="quitarFavorito(receta)">
+          Quitar de favoritos
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </section>
+
+  <p *ngIf="seccion !== 'mis-recetas'">
+    Recetas e imágenes proporcionadas por TheMealDB.
+  </p>
+
+  <p *ngIf="seccion !== 'mis-recetas'" aria-live="polite">
+    {{ mensaje }}
+  </p>
 </ion-content>

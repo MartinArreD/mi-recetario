@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+ion-content {
+  --background: #fff8ee;
+  --color: #382b24;
+}
+
+ion-toolbar {
+  --background: #a84328;
+  --color: #ffffff;
+
+  padding: 6px 0;
+}
+
+ion-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+h1 {
+  max-width: 420px;
+  margin: 48px auto 12px;
+  color: #a84328;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34px;
+  text-align: center;
+}
+
+p {
+  max-width: 420px;
+  margin: 12px auto;
+  color: #6b574b;
+  line-height: 1.7;
+  text-align: center;
+}
+
+form {
+  max-width: 420px;
+  margin: 28px auto;
+  padding: 24px;
+  border: 1px solid #e8d9c8;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(82, 49, 28, 0.07);
+}
+
+ion-input {
+  --background: #fffaf3;
+  --color: #382b24;
+  --highlight-color-focused: #a84328;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+
+  margin-bottom: 20px;
+  border: 1px solid #e8d9c8;
+  border-radius: 12px;
+}
+
+ion-input:focus-within {
+  border-color: #a84328;
+  box-shadow: 0 0 0 3px rgba(168, 67, 40, 0.12);
+}
+
+ion-button {
+  --background: #a84328;
+  --background-hover: #87341e;
+  --background-activated: #87341e;
+  --color: #ffffff;
+  --border-radius: 12px;
+  --box-shadow: none;
+
+  min-height: 46px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+ion-button[fill="outline"] {
+  --background: transparent;
+  --background-hover: #f2e7d8;
+  --background-activated: #eadbc9;
+  --color: #53613c;
+  --border-color: #53613c;
+}
+
+@media (max-width: 480px) {
+  h1 {
+    margin-top: 32px;
+    font-size: 29px;
+  }
+
+  form {
+    padding: 20px 16px;
+  }
+}

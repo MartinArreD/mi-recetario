@@ -1,27 +1,243 @@
-#container {
-  text-align: center;
+:host {
+  --recetario-crema: #fff8ee;
+  --recetario-papel: #ffffff;
+  --recetario-terracota: #a84328;
+  --recetario-terracota-oscuro: #87341e;
+  --recetario-oliva: #53613c;
+  --recetario-texto: #382b24;
+  --recetario-secundario: #6b574b;
+  --recetario-borde: #e8d9c8;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  display: block;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-content {
+  --background: var(--recetario-crema);
+  --color: var(--recetario-texto);
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+ion-toolbar {
+  --background: var(--recetario-terracota);
+  --color: #ffffff;
 
-  color: #8c8c8c;
-
-  margin: 0;
+  padding: 6px 0;
 }
 
-#container a {
-  text-decoration: none;
+ion-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Navegación entre las secciones */
+
+ion-segment {
+  max-width: 850px;
+  margin: 8px auto 18px;
+  padding: 5px;
+  border: 1px solid var(--recetario-borde);
+  border-radius: 16px;
+  background: #f2e7d8;
+}
+
+ion-segment-button {
+  --background: transparent;
+  --background-checked: var(--recetario-oliva);
+  --color: var(--recetario-secundario);
+  --color-checked: #ffffff;
+  --indicator-color: transparent;
+  --border-radius: 11px;
+
+  min-height: 46px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+/* Títulos con apariencia de libro de cocina */
+
+section {
+  max-width: 850px;
+  margin: 0 auto;
+  padding-bottom: 16px;
+}
+
+h1,
+h2,
+ion-card-title {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+h1 {
+  margin: 24px 0 8px;
+  color: var(--recetario-terracota);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+h2 {
+  margin: 30px 0 14px;
+  color: var(--recetario-oliva);
+  font-size: 25px;
+  font-weight: 700;
+}
+
+h3 {
+  margin: 22px 0 8px;
+  color: var(--recetario-oliva);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+p {
+  color: var(--recetario-secundario);
+  font-size: 15px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+ion-content > p {
+  max-width: 850px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Tarjetas de recetas */
+
+ion-card {
+  --background: var(--recetario-papel);
+  --color: var(--recetario-texto);
+
+  margin: 20px 0;
+  overflow: hidden;
+  border: 1px solid var(--recetario-borde);
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(82, 49, 28, 0.07);
+}
+
+ion-card-header {
+  padding: 22px 22px 12px;
+}
+
+ion-card-title {
+  --color: var(--recetario-texto);
+
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+ion-card-content {
+  padding: 8px 22px 22px;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+ion-card img {
+  display: block;
+  background: #f2e7d8;
+  border-bottom: 1px solid var(--recetario-borde);
+}
+
+/* Formularios */
+
+ion-input,
+ion-textarea {
+  --background: #fffaf3;
+  --color: var(--recetario-texto);
+  --placeholder-color: #766459;
+  --placeholder-opacity: 1;
+  --highlight-color-focused: var(--recetario-terracota);
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --border-color: var(--recetario-borde);
+
+  margin: 12px 0 18px;
+  border: 1px solid var(--recetario-borde);
+  border-radius: 12px;
+}
+
+ion-input:focus-within,
+ion-textarea:focus-within {
+  border-color: var(--recetario-terracota);
+  box-shadow: 0 0 0 3px rgba(168, 67, 40, 0.12);
+}
+
+/* Botones */
+
+ion-button {
+  --border-radius: 12px;
+  --box-shadow: none;
+
+  min-height: 46px;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+
+ion-button:not([color="danger"]) {
+  --background: var(--recetario-terracota);
+  --background-hover: var(--recetario-terracota-oscuro);
+  --background-activated: var(--recetario-terracota-oscuro);
+  --color: #ffffff;
+}
+
+ion-button[fill="outline"]:not([color="danger"]) {
+  --background: transparent;
+  --background-hover: #f2e7d8;
+  --background-activated: #eadbc9;
+  --color: var(--recetario-oliva);
+  --border-color: var(--recetario-oliva);
+  --border-width: 1px;
+}
+
+ion-button[color="danger"] {
+  --color: #ad2929;
+  --border-color: #ad2929;
+  --background-hover: #fff0ed;
+  --background-activated: #ffe3de;
+}
+
+/* Adaptación a teléfonos */
+
+@media (max-width: 480px) {
+  ion-title {
+    font-size: 22px;
+  }
+
+  ion-segment {
+    padding: 3px;
+  }
+
+  ion-segment-button {
+    min-width: 0;
+  }
+
+  ion-segment-button ion-label {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 23px;
+  }
+
+  ion-card-header {
+    padding: 18px 16px 10px;
+  }
+
+  ion-card-content {
+    padding: 8px 16px 18px;
+  }
+
+  ion-card-title {
+    font-size: 22px;
+  }
 }
