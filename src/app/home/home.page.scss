@@ -30,7 +30,7 @@ ion-title {
   letter-spacing: 0.3px;
 }
 
-/* Navegación entre las secciones */
+/* Navegación */
 
 ion-segment {
   max-width: 850px;
@@ -54,7 +54,7 @@ ion-segment-button {
   text-transform: none;
 }
 
-/* Títulos con apariencia de libro de cocina */
+/* Contenido y títulos */
 
 section {
   max-width: 850px;
@@ -102,7 +102,11 @@ ion-content > p {
   margin-left: auto;
 }
 
-/* Tarjetas de recetas */
+.texto-receta {
+  white-space: pre-line;
+}
+
+/* Tarjetas de recetas personales y favoritos */
 
 ion-card {
   --background: var(--recetario-papel);
@@ -137,6 +141,101 @@ ion-card img {
   display: block;
   background: #f2e7d8;
   border-bottom: 1px solid var(--recetario-borde);
+}
+
+.favorito-imagen {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Cuadrícula de resultados de la API */
+
+.recetas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 22px 0;
+}
+
+.tarjeta-receta {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+
+  border: 1px solid var(--recetario-borde);
+  border-radius: 18px;
+  background: var(--recetario-papel);
+  color: var(--recetario-texto);
+
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  box-shadow: 0 5px 16px rgba(82, 49, 28, 0.07);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.tarjeta-receta img,
+.imagen-vacia {
+  display: block;
+  width: 100%;
+  height: 160px;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: #f2e7d8;
+}
+
+.tarjeta-nombre {
+  display: block;
+  padding: 16px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.tarjeta-receta:focus-visible {
+  outline: 3px solid var(--recetario-terracota);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .tarjeta-receta:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(82, 49, 28, 0.14);
+  }
+}
+
+/* Vista de la receta completa */
+
+.detalle-receta {
+  margin: 20px 0;
+  overflow: hidden;
+  border: 1px solid var(--recetario-borde);
+  border-radius: 20px;
+  background: var(--recetario-papel);
+  box-shadow: 0 6px 20px rgba(82, 49, 28, 0.07);
+}
+
+.detalle-imagen {
+  display: block;
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  background: #f2e7d8;
+}
+
+.detalle-contenido {
+  padding: 24px;
+}
+
+.detalle-contenido h1 {
+  margin-top: 0;
 }
 
 /* Formularios */
@@ -202,7 +301,20 @@ ion-button[color="danger"] {
   --background-activated: #ffe3de;
 }
 
-/* Adaptación a teléfonos */
+/* Tabletas */
+
+@media (max-width: 700px) {
+  .recetas-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .detalle-imagen {
+    height: 280px;
+  }
+}
+
+/* Teléfonos */
 
 @media (max-width: 480px) {
   ion-title {
@@ -239,5 +351,28 @@ ion-button[color="danger"] {
 
   ion-card-title {
     font-size: 22px;
+  }
+
+  .recetas-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tarjeta-receta img,
+  .imagen-vacia {
+    height: 190px;
+  }
+
+  .detalle-imagen {
+    height: 230px;
+  }
+
+  .detalle-contenido {
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-receta {
+    transition: none;
   }
 }

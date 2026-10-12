@@ -7,6 +7,7 @@
 <ion-content class="ion-padding">
   <ion-segment
     [(ngModel)]="seccion"
+    (ngModelChange)="cerrarDetalle()"
     [disabled]="procesando"
     class="ion-margin-bottom">
 
@@ -111,10 +112,10 @@
 
       <ion-card-content>
         <h3>Ingredientes</h3>
-        <p style="white-space: pre-line">{{ receta.ingredientes }}</p>
+        <p class="texto-receta">{{ receta.ingredientes }}</p>
 
         <h3>Preparación</h3>
-        <p style="white-space: pre-line">{{ receta.preparacion }}</p>
+        <p class="texto-receta">{{ receta.preparacion }}</p>
 
         <ion-button
           type="button"
@@ -137,95 +138,121 @@
   </section>
 
   <section *ngIf="seccion === 'explorar'">
-    <h1>Explorar recetas</h1>
-
-    <p>
-      Busca por nombre en TheMealDB. Prueba con chicken, pasta o cake.
-      Las recetas se muestran en el idioma del proveedor.
-    </p>
-
-    <form (ngSubmit)="buscarRecetas()">
-      <ion-input
-        label="Buscar recetas"
-        labelPlacement="stacked"
-        placeholder="Ejemplo: chicken"
-        name="busqueda"
-        [(ngModel)]="busqueda"
-        [disabled]="buscando">
-      </ion-input>
+    <ng-container
+      *ngIf="recetaSeleccionada as receta; else listaResultados">
 
       <ion-button
-        class="ion-margin-top"
-        expand="block"
-        type="submit"
-        [disabled]="buscando">
-        {{ buscando ? 'Buscando...' : 'Buscar recetas' }}
+        type="button"
+        fill="outline"
+        (click)="cerrarDetalle()">
+        Volver a resultados
       </ion-button>
-    </form>
 
-    <p aria-live="polite">{{ mensajeBusqueda }}</p>
-    <p aria-live="polite">{{ mensajeFavoritos }}</p>
+      <article class="detalle-receta">
+        <img
+          *ngIf="receta.imagen"
+          class="detalle-imagen"
+          [src]="receta.imagen"
+          [alt]="receta.nombre">
 
-    <ion-card *ngFor="let receta of resultados">
-      <img
-        *ngIf="receta.imagen"
-        [src]="receta.imagen"
-        [alt]="receta.nombre"
-        loading="lazy"
-        style="width: 100%; height: 200px; object-fit: cover;">
+        <div class="detalle-contenido">
+          <h1>{{ receta.nombre }}</h1>
 
-      <ion-card-header>
-        <ion-card-title>{{ receta.nombre }}</ion-card-title>
-      </ion-card-header>
+          <ion-button
+            type="button"
+            [disabled]="procesando || cargandoFavoritos || esFavorito(receta.id)"
+            (click)="guardarFavorito(receta)">
+            {{ esFavorito(receta.id) ? 'Ya está en favoritos' : 'Guardar favorito' }}
+          </ion-button>
 
-      <ion-card-content>
-        <h3>Ingredientes</h3>
-        <p style="white-space: pre-line">{{ receta.ingredientes }}</p>
+          <p aria-live="polite">{{ mensajeFavoritos }}</p>
 
-        <h3>Preparación</h3>
-        <p style="white-space: pre-line">{{ receta.preparacion }}</p>
+          <h2>Ingredientes</h2>
+          <p class="texto-receta">{{ receta.ingredientes }}</p>
+
+          <h2>Preparación</h2>
+          <p class="texto-receta">{{ receta.preparacion }}</p>
+        </div>
+      </article>
+    </ng-container>
+
+    <ng-template #listaResultados>
+      <h1>Explorar recetas</h1>
+
+      <p>
+        Busca por nombre en TheMealDB. Prueba con chicken, pasta o cake.
+        Las recetas se muestran en el idioma del proveedor.
+      </p>
+
+      <form (ngSubmit)="buscarRecetas()">
+        <ion-input
+          label="Buscar recetas"
+          labelPlacement="stacked"
+          placeholder="Ejemplo: chicken"
+          name="busqueda"
+          [(ngModel)]="busqueda"
+          [disabled]="buscando">
+        </ion-input>
 
         <ion-button
-          type="button"
-          [disabled]="procesando || cargandoFavoritos || esFavorito(receta.id)"
-          (click)="guardarFavorito(receta)">
-          {{ esFavorito(receta.id) ? 'Ya está en favoritos' : 'Guardar favorito' }}
+          class="ion-margin-top"
+          expand="block"
+          type="submit"
+          [disabled]="buscando">
+          {{ buscando ? 'Buscando...' : 'Buscar recetas' }}
         </ion-button>
-      </ion-card-content>
-    </ion-card>
+      </form>
+
+      <p aria-live="polite">{{ mensajeBusqueda }}</p>
+      <p aria-live="polite">{{ mensajeFavoritos }}</p>
+
+      <div class="recetas-grid">
+        <button
+          *ngFor="let receta of resultados; trackBy: identificarReceta"
+          class="tarjeta-receta"
+          type="button"
+          [attr.aria-label]="'Ver receta de ' + receta.nombre"
+          (click)="abrirReceta(receta)">
+
+          <img
+            *ngIf="receta.imagen; else sinImagen"
+            [src]="receta.imagen"
+            alt=""
+            loading="lazy">
+
+          <ng-template #sinImagen>
+            <div class="imagen-vacia" aria-hidden="true"></div>
+          </ng-template>
+
+          <span class="tarjeta-nombre">{{ receta.nombre }}</span>
+        </button>
+      </div>
+    </ng-template>
   </section>
 
   <section *ngIf="seccion === 'favoritos'">
-    <h1>Mis favoritos</h1>
+  <ng-container
+    *ngIf="recetaSeleccionada as receta; else listaFavoritos">
 
-    <p aria-live="polite">{{ mensajeFavoritos }}</p>
+    <ion-button
+      type="button"
+      fill="outline"
+      (click)="cerrarDetalle()">
+      Volver a favoritos
+    </ion-button>
 
-    <p *ngIf="cargandoFavoritos">Cargando favoritos...</p>
-
-    <p *ngIf="!cargandoFavoritos && favoritos.length === 0">
-      Todavía no tienes favoritos. Busca una receta y guárdala.
-    </p>
-
-    <ion-card *ngFor="let receta of favoritos">
+    <article class="detalle-receta">
       <img
         *ngIf="receta.imagen"
+        class="detalle-imagen"
         [src]="receta.imagen"
-        [alt]="receta.nombre"
-        loading="lazy"
-        style="width: 100%; height: 200px; object-fit: cover;">
+        [alt]="receta.nombre">
 
-      <ion-card-header>
-        <ion-card-title>{{ receta.nombre }}</ion-card-title>
-      </ion-card-header>
-
-      <ion-card-content>
-        <h3>Ingredientes</h3>
-        <p style="white-space: pre-line">{{ receta.ingredientes }}</p>
-
-        <h3>Preparación</h3>
-        <p style="white-space: pre-line">{{ receta.preparacion }}</p>
+      <div class="detalle-contenido">
+        <h1>{{ receta.nombre }}</h1>
 
         <ion-button
+          *ngIf="esFavorito(receta.id)"
           type="button"
           color="danger"
           fill="outline"
@@ -233,9 +260,54 @@
           (click)="quitarFavorito(receta)">
           Quitar de favoritos
         </ion-button>
-      </ion-card-content>
-    </ion-card>
-  </section>
+
+        <p aria-live="polite">{{ mensajeFavoritos }}</p>
+
+        <h2>Ingredientes</h2>
+        <p class="texto-receta">{{ receta.ingredientes }}</p>
+
+        <h2>Preparación</h2>
+        <p class="texto-receta">{{ receta.preparacion }}</p>
+      </div>
+    </article>
+  </ng-container>
+
+  <ng-template #listaFavoritos>
+    <h1>Mis favoritos</h1>
+
+    <p aria-live="polite">{{ mensajeFavoritos }}</p>
+
+    <p *ngIf="cargandoFavoritos">
+      Cargando favoritos...
+    </p>
+
+    <p *ngIf="!cargandoFavoritos && favoritos.length === 0">
+      Todavía no tienes favoritos. Busca una receta y guárdala.
+    </p>
+
+    <div class="recetas-grid">
+      <button
+        *ngFor="let receta of favoritos; trackBy: identificarReceta"
+        class="tarjeta-receta"
+        type="button"
+        [attr.aria-label]="'Ver receta de ' + receta.nombre"
+        (click)="abrirReceta(receta)">
+
+        <img
+          *ngIf="receta.imagen; else favoritoSinImagen"
+          [src]="receta.imagen"
+          alt=""
+          loading="lazy">
+
+        <ng-template #favoritoSinImagen>
+          <div class="imagen-vacia" aria-hidden="true"></div>
+        </ng-template>
+
+        <span class="tarjeta-nombre">{{ receta.nombre }}</span>
+      </button>
+    </div>
+  </ng-template>
+</section>
 
   <p *ngIf="seccion !== 'mis-recetas'">
     Recetas e imágenes proporcionadas por TheMealDB.

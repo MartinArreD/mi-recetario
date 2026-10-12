@@ -5,10 +5,12 @@ import {
   OnDestroy,
   ChangeDetectorRef
 } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
+
 import {
   IonHeader,
   IonToolbar,
@@ -30,11 +32,14 @@ import {
   Receta,
   RecetasRepository
 } from '../services/recetas.repository';
+
 import { AuthService } from '../services/auth.service';
+
 import {
   RecetaExterna,
   RecetasApiService
 } from '../services/recetas-api.service';
+
 import {
   FavoritosRepository
 } from '../services/favoritos.repository';
@@ -93,6 +98,8 @@ export class HomePage implements OnDestroy {
   buscando = false;
   mensajeBusqueda = '';
 
+  recetaSeleccionada: RecetaExterna | null = null;
+
   favoritos: RecetaExterna[] = [];
   cargandoFavoritos = true;
   mensajeFavoritos = '';
@@ -145,6 +152,24 @@ export class HomePage implements OnDestroy {
     this.limpiarBusqueda();
   }
 
+  abrirReceta(receta: RecetaExterna): void {
+    this.recetaSeleccionada = receta;
+    this.mensajeFavoritos = '';
+    this.detector.markForCheck();
+  }
+
+  cerrarDetalle(): void {
+    this.recetaSeleccionada = null;
+    this.detector.markForCheck();
+  }
+
+  identificarReceta(
+    _indice: number,
+    receta: RecetaExterna
+  ): string {
+    return receta.id;
+  }
+
   async guardarReceta(): Promise<void> {
     if (this.procesando || this.cargandoRecetas) return;
 
@@ -174,6 +199,7 @@ export class HomePage implements OnDestroy {
       }
 
       this.limpiarFormulario();
+
       this.mensaje = id !== null
         ? 'Receta actualizada en la nube.'
         : 'Receta guardada en la nube.';
@@ -236,6 +262,8 @@ export class HomePage implements OnDestroy {
 
     const termino = this.busqueda.trim();
 
+    this.recetaSeleccionada = null;
+
     if (!termino) {
       this.resultados = [];
       this.mensajeBusqueda = 'Escribe el nombre de una receta.';
@@ -248,6 +276,7 @@ export class HomePage implements OnDestroy {
     this.buscando = true;
     this.resultados = [];
     this.mensajeBusqueda = 'Buscando recetas...';
+    this.mensajeFavoritos = '';
     this.detector.markForCheck();
 
     try {
@@ -256,6 +285,7 @@ export class HomePage implements OnDestroy {
       if (numero !== this.numeroBusqueda) return;
 
       this.resultados = resultados;
+
       this.mensajeBusqueda = resultados.length === 0
         ? 'No se encontraron recetas. Prueba con otro nombre.'
         : `Se encontraron ${resultados.length} recetas.`;
@@ -263,6 +293,7 @@ export class HomePage implements OnDestroy {
       if (numero !== this.numeroBusqueda) return;
 
       console.error(error);
+
       this.mensajeBusqueda =
         error instanceof Error && error.name === 'AbortError'
           ? 'La búsqueda tardó demasiado. Intenta de nuevo.'
@@ -393,6 +424,7 @@ export class HomePage implements OnDestroy {
     this.resultados = [];
     this.buscando = false;
     this.mensajeBusqueda = '';
+    this.recetaSeleccionada = null;
   }
 
   private detenerEscucha(): void {
